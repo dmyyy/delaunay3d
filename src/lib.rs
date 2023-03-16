@@ -12,7 +12,7 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> Option<HashSet<Edge>> {
 
     // construct super tetrahedron (analagous to super triangle in 2d algorithm) that encapsulates
     // all given points
-    let st = make_super_tetrahedron(vertices);
+    let st = create_super_tetrahedron(vertices);
 
     let mut tetrahedrons: Vec<Tetrahedron> = Vec::new();
     tetrahedrons.push(st);
@@ -87,7 +87,7 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> Option<HashSet<Edge>> {
     Some(edges)
 }
 
-fn make_super_tetrahedron(vertices: &[Vertex]) -> Tetrahedron {
+fn create_super_tetrahedron(vertices: &[Vertex]) -> Tetrahedron {
     let mut x_min = vertices[0].coord.x;
     let mut y_min = vertices[0].coord.y;
     let mut z_min = vertices[0].coord.z;
