@@ -14,8 +14,8 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> HashSet<Edge> {
     // all given points
     let st = make_super_tetrahedron(&vertices);
 
-    let mut tetrahedrons = Vec::new();
-    tetrahedrons.push(st);
+    let mut tetrahedrons: Vec<Tetrahedron> = Vec::new();
+    tetrahedrons.push(st.clone());
 
     for vertex in vertices {
         let mut triangles = Vec::new();
@@ -51,7 +51,8 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> HashSet<Edge> {
 
     // remove all tetrahedrons containing a vertex in the super tetrahedron since it wasn't part
     // of the original tetrahedralization
-    tetrahedrons.iter().map(|t| t).filter(|t| {
+    // TODO: rename 
+    let final = tetrahedrons.iter().map(|t| t).filter(|t| {
         !(t.contains_vertex(&st.a)
             || t.contains_vertex(&st.b)
             || t.contains_vertex(&st.c)
@@ -141,6 +142,7 @@ fn make_super_tetrahedron(vertices: &Vec<Vertex>) -> Tetrahedron {
     )
 }
 
+#[derive(Copy, Clone)]
 struct Tetrahedron {
     // tetrahedron vertices
     a: Vertex,
@@ -220,12 +222,12 @@ impl Edge {
 }
 
 #[derive(Copy, Clone)]
-struct Vertex {
-    coord: Coord3D<OrderedFloat<f64>>,
+pub struct Vertex {
+    pub coord: Coord3D<OrderedFloat<f64>>,
 }
 
 impl Vertex {
-    fn new(x: f64, y: f64, z: f64) -> Vertex {
+    pub fn new(x: f64, y: f64, z: f64) -> Vertex {
         Vertex {
             coord: Coord3D {
                 x: OrderedFloat(x),
