@@ -236,7 +236,7 @@ impl Edge {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Vertex {
     pub coord: Coord3D<OrderedFloat<f64>>,
 }
