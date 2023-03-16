@@ -1,0 +1,16 @@
+[package]
+name = "delaunay3d"
+version = "0.1.0"
+edition = "2021"
+authors = ["Dmytro Banin <dima_banin@hotmail.com>"]
+description = "A library to compute Delaunay triangulations in 3D (tetrahedralizations)"
+repository = "https://github.com/dmyyy/delaunay3d"
+keywords = ["delaunay", "delaunay3d"]
+readme = "README.md"
+license = "MIT"
+
+[dependencies]
+bevy = "0.10.0"
+# TODO: update to crate version when robust merges pr
+robust = { git = "https://github.com/dmyyy/robust", branch = "orient3d" }
+ordered-float = { version = "3.4.0", default-features = false }
