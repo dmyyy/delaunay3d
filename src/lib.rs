@@ -12,16 +12,16 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> HashSet<Edge> {
 
     // construct super tetrahedron (analagous to super triangle in 2d algorithm) that encapsulates
     // all given points
-    let st = make_super_tetrahedron(&vertices);
+    let st = make_super_tetrahedron(vertices);
 
     let mut tetrahedrons: Vec<Tetrahedron> = Vec::new();
-    tetrahedrons.push(st.clone());
+    tetrahedrons.push(st);
 
     for vertex in vertices {
         let mut triangles = Vec::new();
 
         for mut t in &mut tetrahedrons {
-            if Tetrahedron::in_circumsphere(&t, vertex) {
+            if Tetrahedron::in_circumsphere(*t, vertex) {
                 t.is_bad = true;
                 triangles.push(Triangle::new(t.a, t.b, t.c));
                 triangles.push(Triangle::new(t.a, t.b, t.d));
@@ -40,8 +40,18 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> HashSet<Edge> {
             }
         }
 
-        tetrahedrons.iter().map(|t| t).filter(|t| t.is_bad);
-        triangles.iter().map(|t| t).filter(|t| t.is_bad);
+        tetrahedrons = tetrahedrons
+            .iter()
+            .copied()
+            // .map(|t| *t)
+            .filter(|t| t.is_bad)
+            .collect();
+        triangles = triangles
+            .iter()
+            .copied()
+            // .map(|t| *t)
+            .filter(|t| t.is_bad)
+            .collect();
 
         // create new tetrahedrons from unique triangles and new vertex
         for t in triangles {
@@ -51,13 +61,18 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> HashSet<Edge> {
 
     // remove all tetrahedrons containing a vertex in the super tetrahedron since it wasn't part
     // of the original tetrahedralization
-    // TODO: rename 
-    let final = tetrahedrons.iter().map(|t| t).filter(|t| {
-        !(t.contains_vertex(&st.a)
-            || t.contains_vertex(&st.b)
-            || t.contains_vertex(&st.c)
-            || t.contains_vertex(&st.d))
-    });
+    // TODO: rename
+    tetrahedrons = tetrahedrons
+        .iter()
+        .copied()
+        // .map(|t| *t)
+        .filter(|t| {
+            !(t.contains_vertex(&st.a)
+                || t.contains_vertex(&st.b)
+                || t.contains_vertex(&st.c)
+                || t.contains_vertex(&st.d))
+        })
+        .collect();
 
     let mut edges = HashSet::new();
     for t in tetrahedrons {
@@ -72,7 +87,7 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> HashSet<Edge> {
     edges
 }
 
-fn make_super_tetrahedron(vertices: &Vec<Vertex>) -> Tetrahedron {
+fn make_super_tetrahedron(vertices: &[Vertex]) -> Tetrahedron {
     let mut x_min = vertices[0].coord.x;
     let mut y_min = vertices[0].coord.y;
     let mut z_min = vertices[0].coord.z;
@@ -80,10 +95,10 @@ fn make_super_tetrahedron(vertices: &Vec<Vertex>) -> Tetrahedron {
     let mut y_max = y_min;
     let mut z_max = z_min;
 
-    for i in 1..vertices.len() {
-        let px = vertices[i].coord.x;
-        let py = vertices[i].coord.y;
-        let pz = vertices[i].coord.z;
+    for v in vertices.iter().skip(1) {
+        let px = v.coord.x;
+        let py = v.coord.y;
+        let pz = v.coord.z;
 
         if px < x_min {
             x_min = px;
@@ -166,7 +181,7 @@ impl Tetrahedron {
 
     // returns whether point is inside the circumsphere constructed via the vertices
     // of the tetrahedron
-    fn in_circumsphere(t: &Tetrahedron, v: &Vertex) -> bool {
+    fn in_circumsphere(t: Tetrahedron, v: &Vertex) -> bool {
         insphere(t.a.coord, t.b.coord, t.c.coord, t.d.coord, v.coord) > 0.
     }
 
@@ -178,6 +193,7 @@ impl Tetrahedron {
     }
 }
 
+#[derive(Copy, Clone)]
 struct Triangle {
     a: Vertex,
     b: Vertex,
@@ -210,9 +226,9 @@ impl Triangle {
 }
 
 #[derive(Hash, Eq, PartialEq)]
-struct Edge {
-    a: Vertex,
-    b: Vertex,
+pub struct Edge {
+    pub a: Vertex,
+    pub b: Vertex,
 }
 
 impl Edge {
