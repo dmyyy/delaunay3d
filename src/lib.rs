@@ -102,20 +102,19 @@ fn make_super_tetrahedron(vertices: &[Vertex]) -> Tetrahedron {
 
         if px < x_min {
             x_min = px;
-        }
-        if py < y_min {
-            y_min = py;
-        }
-        if pz < z_min {
-            z_min = pz;
-        }
-        if px > x_max {
+        } else if px > x_max {
             x_max = px;
         }
-        if py > y_max {
+
+        if py < y_min {
+            y_min = py;
+        } else if py > y_max {
             y_max = py;
         }
-        if pz > z_max {
+
+        if pz < z_min {
+            z_min = pz;
+        } else if pz > z_max {
             z_max = pz;
         }
     }
