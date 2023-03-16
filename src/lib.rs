@@ -20,7 +20,7 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> HashSet<Edge> {
     for vertex in vertices {
         let mut triangles = Vec::new();
 
-        for &mut t in tetrahedrons[0..tetrahedrons.len()] {
+        for mut t in &mut tetrahedrons {
             if Tetrahedron::in_circumsphere(&t, vertex) {
                 t.is_bad = true;
                 triangles.push(Triangle::new(t.a, t.b, t.c));
@@ -168,7 +168,7 @@ impl Tetrahedron {
         insphere(t.a.coord, t.b.coord, t.c.coord, t.d.coord, v.coord) > 0.
     }
 
-    fn contains_vertex(self: &Self, v: &Vertex) -> bool {
+    fn contains_vertex(&self, v: &Vertex) -> bool {
         v.almost_equal(&self.a)
             || v.almost_equal(&self.b)
             || v.almost_equal(&self.c)
@@ -194,7 +194,7 @@ impl Triangle {
         }
     }
 
-    fn almost_equal(self: &Self, triangle: &Triangle) -> bool {
+    fn almost_equal(&self, triangle: &Triangle) -> bool {
         (self.a.almost_equal(&triangle.a)
             || self.a.almost_equal(&triangle.b)
             || self.a.almost_equal(&triangle.c))
@@ -235,7 +235,7 @@ impl Vertex {
         }
     }
 
-    fn almost_equal(self: &Self, v: &Vertex) -> bool {
+    fn almost_equal(&self, v: &Vertex) -> bool {
         (self.coord.x - v.coord.x).powf(2.)
             + (self.coord.y - v.coord.y).powf(2.)
             + (self.coord.z - v.coord.z).powf(2.)
@@ -244,7 +244,7 @@ impl Vertex {
 }
 
 impl PartialEq for Vertex {
-    fn eq(self: &Self, other: &Vertex) -> bool {
+    fn eq(&self, other: &Vertex) -> bool {
         self.coord.x.eq(&other.coord.x)
             && self.coord.y.eq(&other.coord.y)
             && self.coord.z.eq(&other.coord.z)
