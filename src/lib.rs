@@ -4,10 +4,10 @@ use ordered_float::OrderedFloat;
 use robust::{insphere, Coord3D};
 
 // Returns a set of edges representing the 3d delauney triangulation of the passed in points
-pub fn tetrahedralize(vertices: &Vec<Vertex>) -> HashSet<Edge> {
+pub fn tetrahedralize(vertices: &Vec<Vertex>) -> Option<HashSet<Edge>> {
     if vertices.is_empty() {
         // nothing to tetrahedralize
-        // TODO: fail
+        return None;
     }
 
     // construct super tetrahedron (analagous to super triangle in 2d algorithm) that encapsulates
@@ -84,7 +84,7 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> HashSet<Edge> {
         edges.insert(Edge::new(t.d, t.c));
     }
 
-    edges
+    Some(edges)
 }
 
 fn make_super_tetrahedron(vertices: &[Vertex]) -> Tetrahedron {
@@ -225,7 +225,7 @@ impl Triangle {
     }
 }
 
-#[derive(Hash, Eq, PartialEq)]
+#[derive(Copy, Clone, Hash, Eq, PartialEq)]
 pub struct Edge {
     pub a: Vertex,
     pub b: Vertex,
