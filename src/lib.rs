@@ -40,18 +40,8 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> Option<HashSet<Edge>> {
             }
         }
 
-        tetrahedrons = tetrahedrons
-            .iter()
-            .copied()
-            // .map(|t| *t)
-            .filter(|t| t.is_bad)
-            .collect();
-        triangles = triangles
-            .iter()
-            .copied()
-            // .map(|t| *t)
-            .filter(|t| t.is_bad)
-            .collect();
+        tetrahedrons = tetrahedrons.iter().copied().filter(|t| t.is_bad).collect();
+        triangles = triangles.iter().copied().filter(|t| t.is_bad).collect();
 
         // create new tetrahedrons from unique triangles and new vertex
         for t in triangles {
@@ -61,11 +51,9 @@ pub fn tetrahedralize(vertices: &Vec<Vertex>) -> Option<HashSet<Edge>> {
 
     // remove all tetrahedrons containing a vertex in the super tetrahedron since it wasn't part
     // of the original tetrahedralization
-    // TODO: rename
     tetrahedrons = tetrahedrons
         .iter()
         .copied()
-        // .map(|t| *t)
         .filter(|t| {
             !(t.contains_vertex(&st.a)
                 || t.contains_vertex(&st.b)
@@ -231,7 +219,7 @@ pub struct Edge {
 }
 
 impl Edge {
-    fn new(a: Vertex, b: Vertex) -> Edge {
+    pub fn new(a: Vertex, b: Vertex) -> Edge {
         Edge { a, b }
     }
 }
