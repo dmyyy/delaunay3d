@@ -11,6 +11,5 @@ license = "MIT"
 
 [dependencies]
 bevy = "0.10.0"
-# TODO: update to crate version when robust merges pr
-robust = { git = "https://github.com/dmyyy/robust", branch = "orient3d" }
+robust = "1.0.0"
 ordered-float = { version = "3.4.0", default-features = false }
